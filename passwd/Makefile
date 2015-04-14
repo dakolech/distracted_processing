@@ -1,4 +1,4 @@
 all: passwd
 
 passwd: passwd.c
-	mpicc -lcrypt passwd.c -o passwd
+	mpicc -lcrypt passwd-sekw.c -o mpi-passwd

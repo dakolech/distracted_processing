@@ -20,7 +20,7 @@ aaSPfLTmjh3fU
 aaLTdQr7DyHuU 
 */
 
-char *stro="bahAZ9Hk7SCf6";
+char *stro="aaSPfLTmjh3fU";
 
 
 int main(int argc, char **argv)
@@ -30,9 +30,8 @@ int main(int argc, char **argv)
     int size,rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Status status;
     
-    char cmp[5]={0};
+    char cmp[6]={0};
 
     char salt[3]={0};
     salt[0]=stro[0];
@@ -41,28 +40,39 @@ int main(int argc, char **argv)
     char * x;
     /* Ten fragment kodu nalezy _jakos_ zrównoleglić */
     /* pewnie będzie potrzebna jakaś pętla... */
-    int i,j,k,l;
+    int i,j,k,l,m;
     for (i='a'; i<='z'; i++) {
       for (j='a'; j<='z'; j++) {
 	for (k='a'; k<='z'; k++) {
 	  for (l='a'; l<='z'; l++) {
-	    cmp[0] = i;
-	    cmp[1] = j;
-	    cmp[2] = k;
-	    cmp[3] = l;
-	    x=crypt(cmp, salt);
-	    if ((strcmp(x,stro))==0)
-	    {
-	      MPI_Send(cmp, 5, MPI_INT, 0, PASSWD, MPI_COMM_WORLD);		
-	    }    	    
+	    for (m='a'; m<='z'; m++) {
+	      cmp[0] = i;
+	      cmp[1] = j;
+	      cmp[2] = k;
+	      cmp[3] = l;
+	      cmp[4] = m;
+	      
+	      x=crypt(cmp, salt);
+	      if ((strcmp(x,stro))==0)
+	      {
+		printf("Udalo sie: %s %s %s\n", cmp, x, stro);
+	      }
+	    }
 	  }
 	}
       }
     }
     
-    MPI_Recv(cmp, 5, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-    printf("Udalo sie: %s\n", cmp);
-    
+
+    if ((strcmp(x,stro))==0)
+    {
+	    //MPI_Send( &cmp, 5, MPI_INT, 1, PASSWD, MPI_COMM_WORLD);
+            /* w docelowej wersji przeslac odgadnięte hasło masterowi */
+	    printf("Udalo sie: %s %s %s\n", cmp, x, stro);
+            MPI_Finalize();
+	    exit(0);
+    }
+    /* Koniec fragmentu kodu */
 
     MPI_Finalize();
 }
